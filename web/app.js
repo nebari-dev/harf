@@ -4,7 +4,7 @@ import { markdownHooks, toolImage, fileURL, workspacePath } from './plugins.js';
 import { mountFrames } from './frames.js';
 import { statsSummary, statsDetail } from './stats.js';
 import { revealNext, shownText } from './reveal.js';
-import { groupModels } from './models.js';
+import { groupModels, modelWhere } from './models.js';
 import { makerOf, providerName, providerLogo } from './makers.js';
 import { stepTime, workSummary, plainPeek } from './work.js';
 import { agentTags, agentActivity, editedLabel } from './agents.js';
@@ -158,7 +158,8 @@ const agentById = (id) => state.agents.find((a) => a.id === id) || null;
 const currentAgent = () => (state.chat ? agentById(state.chat.agentId) : state.draftAgent);
 const modelIds = () => state.models.map((m) => m.id);
 const hasModel = (id) => state.models.some((m) => m.id === id);
-const modelName = (id) => (state.models.find((m) => m.id === id) || {}).name || id;
+const modelById = (id) => state.models.find((m) => m.id === id) || null;
+const modelName = (id) => (modelById(id) || {}).name || id;
 
 // modelLogo is the logo of the company that made a model (Anthropic for
 // github-copilot/claude-haiku-4.5). A model whose maker is not known gets
@@ -421,7 +422,7 @@ function renderModels() {
   $('modelValue').textContent = cur ? modelName(cur) : state.listed ? 'No models' : 'Loading models';
   $('modelLogo').replaceChildren(...(cur ? [modelLogo(cur, modelName(cur))] : []));
   $('modelBtn').disabled = !cur;
-  $('modelBtn').title = cur ? `Model: ${modelName(cur)}` : 'No models yet';
+  $('modelBtn').title = cur ? `Model: ${modelName(cur)}${modelWhere(modelById(cur)) ? ` (${modelWhere(modelById(cur))})` : ''}` : 'No models yet';
 }
 
 // ---------- dropdowns ----------
@@ -448,7 +449,8 @@ function renderDropdown() {
     for (const m of g.models) {
       const i = dd.rows.length;
       const opt = el('div', { class: 'select-item', role: 'option', id: `dd-o-${i}`, 'aria-selected': String(m.id === current) },
-        m.id ? modelLogo(m.id, m.name) : el('span', { class: 'mlogo' }), el('span', { class: 'select-value' }, m.name || m.id),
+        m.id ? modelLogo(m.id, m.name) : el('span', { class: 'mlogo' }),
+        el('span', { class: 'select-value' }, el('span', { class: 'select-name' }, m.name || m.id), modelWhere(m) ? el('span', { class: 'select-detail' }, modelWhere(m)) : null),
         m.id === current ? el('span', { class: 'select-check', 'aria-hidden': 'true' }, svg(ICON.check)) : null);
       opt.title = m.id;
       opt.addEventListener('pointermove', () => { if (dd.at !== i) highlightDropdown(i, false); });
@@ -671,7 +673,8 @@ function statsView(usage, model) {
   b.addEventListener('click', () => {
     if (menuEl && menuEl.anchor === b) { closeMenu(); return; }
     closeMenu();
-    const rows = [...(model ? [['Model', modelName(model)]] : []), ...statsDetail(usage)];
+    const where = modelWhere(modelById(model) || (model ? { id: model } : null));
+    const rows = [...(model ? [['Model', modelName(model)], ...(where ? [['Sent to', where]] : [])] : []), ...statsDetail(usage)];
     const pop = el('div', { class: 'menu stats-pop', role: 'dialog', 'aria-label': 'Reply stats', tabindex: '-1' },
       el('dl', {}, ...rows.flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, v)])));
     popUp(pop, b);

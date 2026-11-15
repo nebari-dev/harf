@@ -22,3 +22,12 @@ export function groupModels(models, query, current) {
   }
   return groups;
 }
+
+// modelWhere names a model the way Pi is told to use it (provider/id) and,
+// when Pi reports it, where its requests go, without the scheme: a reader
+// can see at a glance that a reply came from the model they meant.
+export function modelWhere(m) {
+  if (!m || !m.id) return '';
+  const where = String(m.baseUrl || '').replace(/^[a-z][\w+.-]*:\/\//i, '').replace(/\/+$/, '');
+  return where ? `${m.id} · ${where}` : m.id;
+}

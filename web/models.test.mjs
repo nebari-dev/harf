@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { groupModels } from './models.js';
+import { groupModels, modelWhere } from './models.js';
 
 const models = [
   { id: 'copilot/haiku', name: 'Claude Haiku', provider: 'copilot' },
@@ -25,4 +25,11 @@ test('a query keeps the models whose name, id or provider matches', () => {
 test('a chat on a model no longer listed keeps it, so it never changes model unseen', () => {
   assert.deepEqual(shape(groupModels(models, '', 'old/model'))[0], ['Current', ['old/model']]);
   assert.deepEqual(shape(groupModels(models, '', 'copilot/haiku')).length, 2);
+});
+
+test('modelWhere says which model id answers and where its requests go', () => {
+  assert.equal(modelWhere({ id: 'local/gpu', name: 'Local GPU', baseUrl: 'http://host.docker.internal:8888/v1' }), 'local/gpu · host.docker.internal:8888/v1');
+  assert.equal(modelWhere({ id: 'openrouter/x', baseUrl: 'https://openrouter.ai/api/v1/' }), 'openrouter/x · openrouter.ai/api/v1');
+  assert.equal(modelWhere({ id: 'images/qwen' }), 'images/qwen');
+  assert.equal(modelWhere(null), '');
 });

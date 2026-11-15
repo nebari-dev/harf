@@ -478,8 +478,10 @@ type Model struct {
 	ID        string `json:"id"` // provider/id, as --model takes it
 	Name      string `json:"name"`
 	Provider  string `json:"provider"`
-	Reasoning bool   `json:"reasoning"` // supports a thinking level
-	Images    bool   `json:"images"`    // accepts images with the prompt
+	Reasoning bool   `json:"reasoning"`         // supports a thinking level
+	Images    bool   `json:"images"`            // accepts images with the prompt
+	API       string `json:"api,omitempty"`     // the wire protocol Pi speaks to it, such as openai-completions
+	BaseURL   string `json:"baseUrl,omitempty"` // where its requests go
 }
 
 // quiet runs Pi for a one-off request: no session, and none of the user's

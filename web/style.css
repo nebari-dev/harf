@@ -436,6 +436,8 @@ a.crumb:hover { color: var(--text); }
 .select-trigger[aria-expanded="true"] { color: var(--text); }
 .select-trigger:disabled { color: var(--text-3); cursor: not-allowed; }
 .select-value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.select-value .select-name, .select-value .select-detail { display: block; overflow: hidden; text-overflow: ellipsis; }
+.select-detail { color: var(--text-3); font-size: var(--fs-2xs); font-weight: 400; }
 .select-chev { width: 14px; height: 14px; color: var(--text-2); stroke-width: 2; transition: transform .12s ease; }
 .select-trigger[aria-expanded="true"] .select-chev { transform: rotate(180deg); }
 .select-pop {

@@ -258,15 +258,16 @@ func TestForkGoesBackBeforeThatMessageInANewSession(t *testing.T) {
 func TestModelsListsWhatPiCanUse(t *testing.T) {
 	r, log := fake(t, scenario{Responses: map[string]json.RawMessage{
 		"get_available_models": json.RawMessage(`{"models":[
-			{"id":"m-1","name":"Model One","provider":"anthropic","reasoning":true,"input":["text","image"]},
+			{"id":"m-1","name":"Model One","provider":"anthropic","reasoning":true,"input":["text","image"],"api":"anthropic-messages","baseUrl":"https://api.example.com"},
 			{"id":"m-2","name":"Model Two","provider":"openai","reasoning":false,"input":["text"]}]}`),
 	}})
 	ms, err := r.Models(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(ms) != 2 || ms[0] != (Model{ID: "anthropic/m-1", Name: "Model One", Provider: "anthropic", Reasoning: true, Images: true}) ||
-		ms[1].Images {
+	// The API and endpoint say where a request really goes, so the UI can show them.
+	if len(ms) != 2 || ms[0] != (Model{ID: "anthropic/m-1", Name: "Model One", Provider: "anthropic", Reasoning: true, Images: true, API: "anthropic-messages", BaseURL: "https://api.example.com"}) ||
+		ms[1].Images || ms[1].BaseURL != "" {
 		t.Errorf("models = %+v", ms)
 	}
 	if args := strings.Join(log().Args, " "); !strings.Contains(args, "--no-session") {
