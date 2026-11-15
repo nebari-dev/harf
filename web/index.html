@@ -276,6 +276,27 @@
   </form>
 </dialog>
 
+<dialog class="lightbox" id="lightbox" aria-label="Picture viewer" tabindex="-1">
+  <div class="lightbox-bar">
+    <div class="lightbox-cap" aria-live="polite">
+      <span class="lightbox-title"></span>
+      <span class="lightbox-file"></span>
+      <span class="lightbox-count"></span>
+    </div>
+    <a class="lightbox-open" target="_blank" rel="noopener noreferrer">Open</a>
+    <button class="icon-btn lightbox-close" type="button" aria-label="Close" title="Close (Esc)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+  <div class="lightbox-stage"><img class="lightbox-img" alt=""></div>
+  <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous picture" title="Previous (Left)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+  </button>
+  <button class="lightbox-nav lightbox-next" type="button" aria-label="Next picture" title="Next (Right)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+  </button>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script defer src="vendor/markdown-it/markdown-it.umd.min.js"></script>

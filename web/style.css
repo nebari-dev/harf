@@ -868,6 +868,43 @@ a.crumb:hover { color: var(--text); }
 .step > .media-card img { max-height: 360px; }
 /* An SVG file may have no size of its own; give it one so it shows. */
 .media-card img[src$=".svg"] { width: min(100%, 420px); }
+.thread img { cursor: zoom-in; }
+.md a img { cursor: pointer; }
+
+/* ---------- the picture viewer: a chat's picture large, over the chat ---------- */
+.lightbox {
+  position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  display: none; flex-direction: column; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px);
+  color: var(--text); outline: none;
+}
+.lightbox[open] { display: flex; }
+.lightbox::backdrop { background: transparent; }
+.lightbox-bar { display: flex; align-items: center; gap: 8px; height: 56px; padding: 0 14px 0 24px; }
+.lightbox-cap { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
+.lightbox-title { overflow: hidden; text-overflow: ellipsis; font-weight: 600; font-size: var(--fs-md); }
+.lightbox-file { overflow: hidden; text-overflow: ellipsis; font: var(--fs-3xs)/1.4 var(--font-mono); color: var(--text-3); }
+.lightbox-count { flex: none; color: var(--text-3); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.lightbox-open { flex: none; padding: 6px 10px; border-radius: 8px; color: var(--accent-text); font-size: var(--fs-sm); font-weight: 500; text-decoration: none; }
+.lightbox-open:hover { background: var(--hover); }
+.lightbox-stage { flex: 1; min-height: 0; display: grid; place-items: center; padding: 4px 76px 28px; touch-action: pinch-zoom; }
+.lightbox-img { max-width: 100%; max-height: calc(100dvh - 56px - 32px); width: auto; height: auto; border-radius: 6px; }
+.lightbox-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--text-2); box-shadow: var(--shadow-composer);
+}
+.lightbox-nav:hover { color: var(--text); background-image: linear-gradient(var(--hover), var(--hover)); }
+.lightbox-nav:active { transform: translateY(calc(-50% + 1px)); }
+.lightbox-nav svg { width: 20px; height: 20px; stroke-width: 2; }
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 16px; }
+/* On a phone the arrows sit under the picture, so it can use the width. */
+@media (max-width: 760px) {
+  .lightbox-bar { padding-left: 16px; }
+  .lightbox-stage { padding: 4px 12px 76px; }
+  .lightbox-img { max-height: calc(100dvh - 56px - 80px); }
+  .lightbox-nav { top: auto; bottom: 16px; transform: none; }
+  .lightbox-nav:active { transform: translateY(1px); }
+}
 
 /* ---------- the Agents page ---------- */
 .agents-page .page-inner { max-width: 1020px; padding: 50px 32px 64px; }

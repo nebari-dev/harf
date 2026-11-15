@@ -13,6 +13,7 @@ import { FONTS, SIZES, ACCENTS, loadAppearance, applyAppearance } from './appear
 import { parsePairs, formatPairs, mcpTool, savedAgent } from './mcp.js';
 import { fileKind } from './filekind.js';
 import { watchReply } from './stream.js';
+import { createLightbox } from './lightbox.js';
 
 // All URLs are relative so the app works under any path prefix, as when a
 // proxy serves it at /u/<owner>/<app>/.
@@ -579,6 +580,15 @@ function renderThread() {
   msgs.forEach((m, i) => thread.append(messageView(m, i === msgs.length - 1)));
   scrollToEnd(true);
 }
+
+// A click on a picture in the thread opens it in the viewer, in place of
+// the link to its file around it; a picture linked to somewhere else keeps
+// its link.
+const lightbox = createLightbox($('lightbox'));
+$('thread').addEventListener('click', (e) => {
+  const img = e.target.closest('img');
+  if (img && lightbox.open(img, $('thread'))) e.preventDefault();
+});
 
 function welcome() {
   const agent = currentAgent();
