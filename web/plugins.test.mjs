@@ -61,6 +61,17 @@ test('an image a tool wrote is shown under its step', () => {
   assert.equal(toolImage(t('bash', 'a.png'), '/srv/ws'), null);
 });
 
+test('a picture an image tool made is shown under its step, from the paths it reports', () => {
+  const t = (name, output, status = 'done') => ({ name, status, args: JSON.stringify({ prompt: 'a cat' }), output });
+  const saved = 'Saved with some/model:\n- images/a-cat-1.png\nShow it in your reply with Markdown.';
+  assert.equal(toolImage(t('generate_image', saved), '/srv/ws'), 'api/files/images/a-cat-1.png');
+  assert.equal(toolImage(t('edit_image', 'Saved:\n- images/a-cat-2.png\n- images/a-cat-3.png'), '/srv/ws'), 'api/files/images/a-cat-2.png');
+  assert.equal(toolImage(t('generate_image', saved, 'running'), '/srv/ws'), null);
+  assert.equal(toolImage(t('generate_image', 'Error: no model'), '/srv/ws'), null);
+  assert.equal(toolImage(t('generate_image', '- /etc/a.png'), '/srv/ws'), null);
+  assert.equal(toolImage(t('bash', '- images/a-cat-1.png'), '/srv/ws'), null);
+});
+
 test('file links encode every part of the path', () => {
   assert.equal(fileURL('uploads/c1/a b#?.png'), 'api/files/uploads/c1/a%20b%23%3F.png');
 });

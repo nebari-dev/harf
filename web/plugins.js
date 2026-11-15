@@ -95,11 +95,24 @@ function chartFigure(body, width) {
   }
 }
 
-// toolImage returns the URL of an image a finished write or edit made.
+// toolImage returns the URL of an image a finished tool step made: the
+// file a write or edit wrote, or the first picture an image tool reports.
 export function toolImage(t, workspace) {
-  if (!t || t.status !== 'done' || (t.name !== 'write' && t.name !== 'edit')) return null;
-  let a = t.args;
-  if (typeof a === 'string') { try { a = JSON.parse(a); } catch { return null; } }
-  const rel = workspacePath(a && (a.path || a.file_path), workspace);
-  return rel && IMAGE.test(rel) ? fileURL(rel) : null;
+  if (!t || t.status !== 'done') return null;
+  if (t.name === 'write' || t.name === 'edit') {
+    let a = t.args;
+    if (typeof a === 'string') { try { a = JSON.parse(a); } catch { return null; } }
+    const rel = workspacePath(a && (a.path || a.file_path), workspace);
+    return rel && IMAGE.test(rel) ? fileURL(rel) : null;
+  }
+  // An image tool (generate_image, or an extension's edit_image and the
+  // like) lists the pictures it saved as "- path" lines. Showing the first
+  // one here keeps it visible even when the reply mistypes the path.
+  if (!/_image$/.test(t.name || '')) return null;
+  for (const line of String(t.output || '').split('\n')) {
+    const m = /^- (.+)$/.exec(line.trim());
+    const rel = m && workspacePath(m[1], workspace);
+    if (rel && IMAGE.test(rel)) return fileURL(rel);
+  }
+  return null;
 }
